@@ -14,5 +14,4 @@ public interface CustomerService {
 
     Customer getBalance(Long accountNumber);
 
-
 }
