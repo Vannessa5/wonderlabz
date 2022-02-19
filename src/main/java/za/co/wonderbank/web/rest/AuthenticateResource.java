@@ -23,7 +23,6 @@ import java.time.LocalDateTime;
 @RestController
 @CrossOrigin(origins = "*")
 public class AuthenticateResource {
-//trace logs for calls made
 
     private Logger logger = LoggerFactory.getLogger(AuthenticateResource.class);
 
