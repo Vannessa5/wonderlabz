@@ -1,0 +1,346 @@
+[20:52, 19/02/2022] Sam°:
+import {Component, OnInit} from '@angular/core';
+import {CustomerService} from "../shared/customer-service";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import swal from "sweetalert2";
+import {Router} from "@angular/router";
+
+@Component({
+selector: 'app-list-customer',
+templateUrl: './list-customer.component.html',
+styleUrls: ['./list-customer.component.css']
+})
+export class ListCustomerComponent implements OnInit {
+
+  cols: any[] = [
+    {field: 'id', header: 'ID', sortable: true},
+  {field: 'firstName', header: 'First Name', sortable: true},
+  {field: 'lastName', header: 'Last Name', sortable: false},
+{field: 'email', header: 'Email', sortable: true},
+{field: 'phoneNumber', header: 'Phone Number', sortable: false},
+]
+
+transactionsCols: any[] = [
+{field: 'id', header: 'ID', sortable: true},
+{field: 'accountNumber', header: 'Account Number'},
+{field: 'accountType', header: 'Account Type'},
+{field: 'transactionType', header: 'Transaction Type'},
+{field: 'amount', header: 'Amount', sortable: true},
+{field: 'balance', header: 'Balance'},
+{field: 'reference', header: 'Reference'},
+{field: 'date', header: 'Transaction Date', type: 'date'},
+]
+
+
+isLoading = false;
+list: any[] = [];
+total = 0;
+displayModal = false;
+headerOption = ""
+
+form: FormGroup = new FormGroup({})
+formIsInvalid = false;
+showTransactions = false;
+transactions: any[] = [];
+
+constructor(private customerService: CustomerService, private formBuilder: FormBuilder, private router: Router) {
+
+this.form = this.formBuilder.group({
+reference: [null, [Validators.required]],
+amount: [null, [Validators.required]],
+accountNumber: [null, [Validators.required]],
+accountType: [null, [Validators.required]],
+})
+}
+
+ngOnInit(): void {
+this.getCustomers();
+}
+
+
+getCustomers() {
+this.isLoading = true;
+this.customerService.getAllCustomers().subscribe((response: any[]) => {
+this.list = response;
+this.isLoading = false;
+console.log('customers', response)
+}, err => {
+this.isLoading = false;
+this.showFailed("Failed Loading Customers")
+})
+}
+
+checkForm(form: FormGroup) {
+
+if (!this.form.valid) {
+this.form.controls['reference'].markAllAsTouched()
+this.form.controls['accountNumber'].markAllAsTouched()
+this.form.controls['amount'].markAllAsTouched()
+this.form.controls['accountType'].markAllAsTouched()
+this.formIsInvalid = true;
+} else {
+this.formIsInvalid = false;
+
+this.submit();
+}
+}
+
+submit() {
+let customer = this.form.value;
+if (this.headerOption.toLowerCase().includes('deposit')) {
+this.customerService.deposit(customer).subscribe((response: any) => {
+this.displayModal = false
+this.showSuccess('Deposit successfully made')
+}, err => {
+this.showFailed(err.message);
+})
+} else {
+this.customerService.withdraw(customer).subscribe((response: any) => {
+this.displayModal = false
+if (response.message) {
+this.showFailed(response.message)
+} else {
+this.showSuccess('Withdrawal successfully made')
+}
+}, err => {
+this.showFailed(err.message);
+})
+}
+}
+
+showModalDialog(options: any, accountNumber: number) {
+this.form.controls['accountNumber'].patchValue(accountNumber)
+this.headerOption = options;
+this.displayModal = true;
+}
+
+
+showSuccess(message: string) {
+swal.fire({
+title: 'Success!',
+text: `${message}`,
+icon: 'success',
+target: 'body',
+confirmButtonText: 'OK',
+}).then(() => {
+this.router.navigate(['/user-list']);
+});
+}
+
+showFailed(message: string) {
+swal.fire({
+title: 'Error',
+text: `${message}`,
+icon: 'error',
+target: 'body',
+confirmButtonText: 'OK',
+})
+}
+
+showTransactionsMo(accountNumber: number) {
+this.showTransactions = true;
+this.form.controls['accountNumber'].patchValue(accountNumber);
+this.getAllTransactions(accountNumber);
+}
+
+getAllTransactions(accountNumber: number) {
+this.isLoading = true;
+this.customerService.getAllTransactions(accountNumber).subscribe((response: any[]) => {
+this.transactions = response;
+this.isLoading = false;
+}, err => {
+this.isLoading = false;
+this.showFailed("Failed to load transactions");
+})
+}
+  }
+[20:53, 19/02/2022] Sam°: replace list-customer.component.html with
+
+<div class="widget">
+
+  <h1>Manage Customers</h1>
+  <div class="widget-header">
+    <p-table #dt [paginator]="true" [loading]="isLoading" [rowsPerPageOptions]="[25,50,75,100]" [rows]="25"
+             [totalRecords]="total" [value]="list">
+      <ng-template pTemplate="caption">
+        <div class="row">
+          <div class="col-md-12">
+            <button [routerLink]="['../customer-create']"
+                    class="p-button-raised pull-left p-button-success p-button-rounded float-end"
+                    icon="pi pi-plus" pButton title="Open Account" type="button">
+            </button>
+          </div>
+        </div>
+
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngFor="let col of cols">
+      <span [title]="col.header" class="d-inline-block text-truncate" style="max-width: 100%">
+        {{col.header}}
+      </span>
+          </th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template let-list pTemplate="body">
+        <tr>
+          <td *ngFor="let col of cols">
+            <div [ngSwitch]="col.type">
+                 <span *ngSwitchCase="'date'" class="d-inline-block text-truncate" style="max-width: 100%"
+                       [title]="list[col.field]| date : 'yyyy-MM-dd hh:mm a'">
+                 {{list[col.field]| date : 'yyyy-MM-dd hh:mm a'}}
+            </span>
+
+              <span *ngSwitchDefault [title]="list[col.field]" class="d-inline-block text-truncate"
+                    style="max-width: 100%"> {{list[col.field]}}</span>
+            </div>
+          </td>
+          <td class="text-center">
+            <button [routerLink]="['../customer-edit',list.account.accountNumber]"
+                    class="p-button-rounded p-button-secondary me-2"
+                    icon="pi pi-pencil" pButton title="Edit"
+                    type="button"></button>
+            <button pButton pRipple type="button"
+                    [icon]="'pi pi-money-bill'"
+                    [class]="'p-button-rounded p-button-warning  me-2'"
+                    [title]="'Withdraw'"
+                    (click)="showModalDialog('Withdraw', list.account.accountNumber)"></button>
+
+            <button pButton pRipple type="button"
+                    [icon]="'pi pi-money-bill'"
+                    [class]="'p-button-rounded p-button-success  me-2'"
+                    [title]="'Deposit'"
+                    (click)="showModalDialog('Deposit', list.account.accountNumber)"></button>
+
+            <button pButton pRipple type="button"
+                    [icon]="'pi pi-list'"
+                    [class]="'p-button-rounded p-button-success  me-2'"
+                    [title]="'Transactions'"
+                    (click)="showTransactionsMo( list.account.accountNumber)"></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+
+<p-dialog [header]="headerOption" [(visible)]="displayModal" [modal]="true" [style]="{width: '50vw'}"
+          [draggable]="false" [resizable]="false">
+
+  <div class="row">
+
+    <div class="col-sm-12 col-lg-12">
+
+      <section class="widget" widget>
+
+        <header>
+          <h5>
+            Enter the following information to {{headerOption}} </h5>
+        </header>
+
+        <div class="widget-body">
+          <form [formGroup]="form">
+            <div id="form79" class="form-horizontal form-label-left p-fluid" novalidate>
+
+              <div class="p-col-4 p-mt-5">
+                <label>Account Number<span class="required"> *</span></label>
+                <input pInputText type="text" formControlName="accountNumber"
+                       [class]="formIsInvalid && form.controls['accountNumber'].errors? 'ng-invalid ng-dirty': ''">
+                <div *ngIf="form.controls['accountNumber'].errors" class="required">
+                  Account Number is required
+                </div>
+              </div>
+              <div class="p-col p-mt-5">
+                <label>Amount <span class="required"> *</span></label>
+                <input
+                  formControlName="amount" pInputText type="text"
+                  [class]="formIsInvalid && form.controls['amount'].errors? 'ng-invalid ng-dirty': ''">
+                <div *ngIf="form.controls['amount'].errors" class="required">
+                  Amount is required
+                </div>
+              </div>
+
+              <div class="p-col p-mt-5">
+                <label>Account Type <span class="required"> *</span></label>
+                <input
+                  formControlName="accountType" pInputText type="text"
+                  [class]="formIsInvalid && form.controls['accountType'].errors? 'ng-invalid ng-dirty': ''">
+                <div *ngIf="form.controls['accountType'].errors" class="required">
+                  Account Type is required
+                </div>
+              </div>
+            </div>
+
+            <div class="p-fluid p-formgrid p-grid p-ml-3 p-mr-3">
+
+              <div class="p-col p-mt-5">
+                <label>Reference <span class="required"> *</span></label>
+                <input pInputText formControlName="reference"
+                       [class]="formIsInvalid && form.controls['reference'].errors? 'ng-invalid ng-dirty': ''">
+                <div *ngIf="form.controls['reference'].errors" class="required">
+                  Reference is required / Invalid
+                </div>
+              </div>
+            </div>
+
+          </form>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button icon="pi pi-check" pButton pRipple iconPos="right" class="p-button-raised p-button-success"
+            label="Submit" styleClass="p-button-text"
+            (click)="checkForm(form)"></button>
+  </ng-template>
+</p-dialog>
+
+
+<p-dialog [header]="'Transactions'" [(visible)]="showTransactions" [modal]="true" [style]="{width: '80%'}"
+          [draggable]="false" [resizable]="false" [position]="'top'">
+
+  <div class="row">
+
+    <div class="col-sm-12 col-lg-12">
+
+      <section class="widget" widget>
+
+        <header>
+          <h5>
+            Transactions Details for Account Number: <b> {{form.controls.accountNumber.value}}</b></h5>
+        </header>
+
+        <p-table #dt [paginator]="true" [loading]="isLoading" [rowsPerPageOptions]="[25,50,75,100]" [rows]="25"
+                 [totalRecords]="total" [value]="transactions">
+          <ng-template pTemplate="header">
+            <tr>
+              <th *ngFor="let col of transactionsCols">
+      <span [title]="col.header" class="d-inline-block text-truncate" style="max-width: 100%">
+        {{col.header}}
+      </span>
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template let-list pTemplate="body">
+            <tr>
+              <td *ngFor="let col of transactionsCols">
+                <div [ngSwitch]="col.type">
+                 <span *ngSwitchCase="'date'" class="d-inline-block text-truncate" style="max-width: 100%"
+                       [title]="list[col.field]| date : 'yyyy-MM-dd hh:mm a'">
+                 {{list[col.field]| date : 'yyyy-MM-dd hh:mm a'}}
+            </span>
+
+                  <span *ngSwitchDefault [title]="list[col.field]" class="d-inline-block text-truncate"
+                        style="max-width: 100%"> {{list[col.field]}}</span>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </section>
+    </div>
+  </div>
+</p-dialog>

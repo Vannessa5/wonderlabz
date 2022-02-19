@@ -1,0 +1,14 @@
+
+.error {
+  color: #dd5826;
+}
+
+.requiredField {
+  color: red !important;
+  font-weight: 900 !important;
+}
+
+
+.marginEnd{
+  margin-left: 80%;
+}

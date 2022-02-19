@@ -1,0 +1,35 @@
+<p-toast position="top-center"></p-toast>
+
+
+<div *ngIf="!showLoginWithOpt" id="id01">
+
+  <form [formGroup]="form" class="modal-content animate">
+    <div class="imgcontainer p-fluid">
+      <img alt="Avatar" class="avatar" src="../../assets/logo/logo.jpeg">
+    </div>
+
+    <div class="container">
+      <label><b>Username</b></label>
+      <input formControlName="username" name="uname" pInputText placeholder="Enter Username" type="text"
+             [class]="(form.controls['username'].touched && formIsInValid && form.controls['username'].errors)? 'ng-invalid ng-dirty': ''">
+      <div *ngIf="form.controls['username'].touched && form.controls['username'].errors" class="required">
+        Required Username
+      </div>
+      <label><b>Password</b></label>
+      <input formControlName="password" formControlName="password" name="psw" pInputText
+             placeholder="Enter Password" type="password"
+             [class]="(formIsInValid && form.controls['password'].errors)? 'ng-invalid ng-dirty': ''">
+      <div *ngIf="form.controls['password'].touched && form.controls['password'].errors" class="required">
+        Required Password
+      </div>
+      <button (click)="checkForm(form)" [loading]="isLoading" stylwClass="" class="p-button-raised p-button-success"
+              icon="pi pi-check" iconPos="right"
+              label="Submit" pButton></button>
+      <span *ngIf="message" class="required"> {{message}}</span><br>
+    </div>
+    <div class="container"></div>
+  </form>
+</div>
+
+
+

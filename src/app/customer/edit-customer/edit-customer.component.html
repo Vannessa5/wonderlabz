@@ -1,0 +1,128 @@
+<div class="row">
+
+  <div class="col-sm-12 col-lg-12">
+
+    <section class="widget" widget>
+
+      <header>
+        <h5>
+          Enter the following information to {{process}} </h5>
+      </header>
+
+      <div class="widget-body">
+        <form [formGroup]="form">
+          <div id="form79" class="form-horizontal form-label-left p-fluid" novalidate>
+
+            <div *ngIf="form.controls.id.value" class="p-col-4 p-mt-5">
+              <label>Id</label>
+              <input pInputText type="text" formControlName="id"
+                     [class]="formIsInvalid && form.controls['id'].errors? 'ng-invalid ng-dirty': ''">
+              <div *ngIf="form.controls['id'].errors" class="required">
+                Id is required
+              </div>
+            </div>
+            <div class="p-col p-mt-5">
+              <label>First Name <span class="required"> *</span></label>
+              <input
+                formControlName="firstName" pInputText type="text"
+                [class]="formIsInvalid && form.controls['firstName'].errors? 'ng-invalid ng-dirty': ''">
+              <div *ngIf="form.controls['firstName'].errors" class="required">
+                First Name is required
+              </div>
+            </div>
+
+            <div class="p-col p-mt-5">
+              <label>Last Name <span class="required"> *</span></label>
+              <input
+                formControlName="lastName" pInputText type="text"
+                [class]="formIsInvalid && form.controls['lastName'].errors? 'ng-invalid ng-dirty': ''">
+              <div *ngIf="form.controls['lastName'].errors" class="required">
+                Last Name is required
+              </div>
+            </div>
+          </div>
+
+          <div class="p-fluid p-formgrid p-grid p-ml-3 p-mr-3">
+
+            <div class="p-col p-mt-5">
+              <label>Email <span class="required"> *</span></label>
+              <input pInputText formControlName="email"
+                     [class]="formIsInvalid && form.controls['email'].errors? 'ng-invalid ng-dirty': ''">
+              <div *ngIf="form.controls['email'].errors" class="required">
+                Email is required / Invalid
+              </div>
+            </div>
+
+            <div class="p-col p-mt-5 ">
+              <label>Phone Number <span class="required"> *</span></label>
+              <input
+                formControlName="phoneNumber" pInputText
+                [class]="formIsInvalid && form.controls['phoneNumber'].errors? 'ng-invalid ng-dirty': ''">
+              <div *ngIf="form.controls['phoneNumber'].errors" class="required">
+                Phone is required / Invalid
+              </div>
+            </div>
+          </div>
+
+          <form [formGroup]="accountForm">
+            <h2>Account Details</h2>
+            <div class="p-col-4 p-mt-5 p-fluid">
+              <label>Account Number<span class="required"> *</span></label>
+              <input formControlName="accountNumber" pInputText type="number"
+                     [class]="formIsInvalid && accountForm.controls['accountNumber'].errors? 'ng-invalid ng-dirty': ''">
+              <div *ngIf="accountForm.controls['accountNumber'].errors" class="required">
+                Account Number is required
+              </div>
+            </div>
+
+            <form [formGroup]="accountTypeForm">
+              <h2>Account Type Details</h2>
+
+              <div *ngIf="accountTypeList.length > 0">
+                Added Account Type: <b>{{accountTypeList[0].name}} </b>
+              </div>
+
+              <button pButton [disabled]="accountTypeList.length > 0"
+                      class="p-button-raised p-button-success p-button-rounded float-end mb-2" icon="pi pi-plus"
+                      title="Add Account Type" (click)="addAccountType()"></button>
+              <div class=" p-col-4 p-mt-5 p-fluid">
+                <label>Name<span class="required"> *</span> </label>
+                <input formControlName="name" pInputText type="text"
+                       [class]="formIsInvalid && accountTypeForm.controls['name'].errors? 'ng-invalid ng-dirty': ''"
+                       placeholder="Please enter 'Saving Account' or 'Current Account'">
+                <div *ngIf="accountTypeInvalid()">
+                  Please enter 'Saving Account' or 'Current Account'
+                </div>
+                <div *ngIf="accountTypeForm.controls['name'].errors" class="required">
+                  Account Number is required
+                </div>
+              </div>
+              <div class="p-fluid">
+                <label>Balance<span class="required"> *</span> </label>
+                <input formControlName="balance" pInputText type="text"
+                       [class]="formIsInvalid && accountTypeForm.controls['balance'].errors? 'ng-invalid ng-dirty': ''">
+                <div *ngIf="accountTypeForm.controls['balance'].errors" class="required">
+                  Account Number is required
+                </div>
+              </div>
+            </form>
+          </form>
+
+
+          <div class="form-actions p-col-4 p-mt-5 mt-md-3">
+            <p-button type="submit" styleClass="p-button-success p-button-raised" class="float-end"
+                      [loading]="isLoading" label="Submit" icon="pi pi-check" iconPos="right"
+                      (click)="checkForm(form)"
+            >
+            </p-button>
+            <button type="button" pButton class="p-button-raised p-button-secondary" (click)="routeToList()"
+                    icon="pi pi-times" label="Cancel">
+            </button>
+
+          </div>
+
+        </form>
+      </div>
+    </section>
+  </div>
+</div>

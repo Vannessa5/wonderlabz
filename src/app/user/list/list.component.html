@@ -1,0 +1,56 @@
+<div class="widget">
+
+  <h1>Manage Users</h1>
+  <div class="widget-header">
+    <p-table #dt [paginator]="true" [loading]="isLoading" [rowsPerPageOptions]="[25,50,75,100]" [rows]="25"
+             [totalRecords]="total" [value]="list">
+      <ng-template pTemplate="caption">
+        <div class="row">
+          <div class="col-md-12">
+            <button [routerLink]="['../user-create']"
+                    class="p-button-raised pull-left p-button-success p-button-rounded float-end"
+                    icon="pi pi-plus" pButton title="Create User" type="button">
+            </button>
+          </div>
+        </div>
+
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngFor="let col of cols">
+      <span [title]="col.header" class="d-inline-block text-truncate" style="max-width: 100%">
+        {{col.header}}
+      </span>
+          </th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template let-list pTemplate="body">
+        <tr>
+          <td *ngFor="let col of cols">
+            <div [ngSwitch]="col.type">
+                 <span *ngSwitchCase="'date'" class="d-inline-block text-truncate" style="max-width: 100%"
+                       [title]="list[col.field]| date : 'yyyy-MM-dd hh:mm a'">
+                 {{list[col.field]| date : 'yyyy-MM-dd hh:mm a'}}
+            </span>
+
+              <span *ngSwitchDefault [title]="list[col.field]" class="d-inline-block text-truncate"
+                    style="max-width: 100%"> {{list[col.field]}}</span>
+            </div>
+          </td>
+          <td class="text-center">
+            <button [routerLink]="['../user-edit',list.username]"
+                    class="p-button-rounded p-button-secondary me-2"
+                    icon="pi pi-pencil" pButton title="Edit"
+                    type="button"></button>
+            <button pButton pRipple type="button"
+                    [icon]="(list.enabled === true)?'pi pi-lock-open':'pi pi-lock'"
+                    [class]="(list.enabled === true)?'p-button-rounded p-button-success':'p-button-rounded p-button-danger'"
+                    [title]="((list.enabled === true)?'De-Activate':'Activate')"
+                    (click)="update(list)"></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

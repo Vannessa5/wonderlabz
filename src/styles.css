@@ -1,0 +1,58 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "../node_modules/primeng/resources/themes/nova/theme.css";
+@import "../node_modules/primeng/resources/primeng.min.css";
+@import "../node_modules/primeicons/primeicons.css";
+
+
+.body {
+  background-color: grey;
+}
+
+.alignCenter {
+  text-align: center;
+}
+
+.marginTop15 {
+  margin-top: 15px;
+}
+
+.required {
+  color: red;
+  font-size: 16px;
+}
+
+.marginLeft650 {
+  margin-left: 40%;
+}
+
+.marginLeft30 {
+  margin-left: 20%;
+}
+
+.marginLeft58Percent {
+  margin-left: 58%;
+}
+
+.widget {
+  margin-top: 10px;
+  background-color: white;
+  width: 90%;
+  margin-left: 3%;
+}
+
+.width40Percent {
+  margin-left: 40%;
+  width: 15%;
+}
+
+.heightAuto {
+  height: auto;
+}
+
+.width100Percent {
+  width: 100%;
+}
+.marginBottom15 {
+  margin-bottom: 15px;
+}
