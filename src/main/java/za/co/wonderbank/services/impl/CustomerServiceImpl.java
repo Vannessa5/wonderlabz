@@ -87,7 +87,7 @@ public class CustomerServiceImpl implements CustomerService {
                         Transaction transaction = new Transaction(accountNumber, "Withdrawal", amount, balance, reference, LocalDateTime.now(), accountType);
                         this.transactionRepository.save(transaction);
                     } else {
-                        throw new Exception("Insufficient Funds. Balance can't be less than 1000.0. Requested amount "+ amount+ " Available balance "+type.getBalance() );
+                        throw new Exception("Insufficient Funds. Balance can't be less than 1000.0. Requested amount " + amount + " Available balance " + type.getBalance());
                     }
                 } else if (type.getName().equalsIgnoreCase(accountType)
                         && type.getName().equalsIgnoreCase("Current Account")) {
@@ -99,7 +99,7 @@ public class CustomerServiceImpl implements CustomerService {
                         Transaction transaction = new Transaction(accountNumber, "Withdrawal", amount, balance, reference, LocalDateTime.now());
                         this.transactionRepository.save(transaction);
                     } else {
-                        throw new Exception("Insufficient Funds. Balance can't be less than 1000.0. Requested amount "+ amount+ " Available balance "+type.getBalance() );
+                        throw new Exception("Insufficient Funds. Balance can't be less than 1000.0. Requested amount " + amount + " Available balance " + type.getBalance());
                     }
                 }
             }
@@ -112,5 +112,12 @@ public class CustomerServiceImpl implements CustomerService {
         log.info("Request to get customer by account number: {}", accountNumber);
         Account byAccountNumber = this.accountService.findByAccountNumber(accountNumber);
         return this.customerRepository.findByAccountId(byAccountNumber.getId());
+    }
+
+    @Override
+    public List<Customer> findAllCustomers() {
+        log.info("Request to get all customers");
+        List<Customer> all = this.customerRepository.findAll();
+        return all;
     }
 }

@@ -2,24 +2,29 @@ package za.co.wonderbank.web.rest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import za.co.wonderbank.models.AccountType;
 import za.co.wonderbank.models.Customer;
 import za.co.wonderbank.models.dto.AccountDto;
+import za.co.wonderbank.repositories.CustomerRepository;
 import za.co.wonderbank.services.CustomerService;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "*") // cross origin will only allow for specific entry
+@CrossOrigin(origins = "*")
 public class CustomerResource {
 
     private final Logger log = LoggerFactory.getLogger(CustomerResource.class);
 
     private final CustomerService customerService;
+
+    @Autowired
+    private CustomerRepository customerRepository;
 
     public CustomerResource(CustomerService customerService) {
         this.customerService = customerService;
@@ -109,5 +114,20 @@ public class CustomerResource {
         log.info("Rest request to get balance: {}", accountNumber);
         Customer balance = this.customerService.getBalance(accountNumber);
         return ResponseEntity.ok(balance);
+    }
+
+    @GetMapping("/customers")
+    public ResponseEntity getAllCustomers(){
+        log.info("Rest request to get all customers: {}" );
+        List<Customer> allCustomers = this.customerService.findAllCustomers();
+        return ResponseEntity.ok(allCustomers);
+    }
+
+
+    @DeleteMapping("/customers/{id}")
+    public ResponseEntity getAllCustomers(@PathVariable Long id) {
+        log.info("Rest request to get all customers: {}" );
+        this.customerRepository.deleteById(id);
+        return ResponseEntity.ok("Done");
     }
 }

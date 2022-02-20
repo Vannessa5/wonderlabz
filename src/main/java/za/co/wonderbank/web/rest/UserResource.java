@@ -49,4 +49,12 @@ public class UserResource {
         User result = this.userService.save(user);
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/user/{username}")
+    public ResponseEntity<User> findByUsername(@PathVariable String username) {
+        log.info("Request To get user", username);
+        User result = userService.findByUsername(username);
+        return ResponseEntity.ok(result);
+    }
+
 }

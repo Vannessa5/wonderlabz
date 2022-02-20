@@ -3,6 +3,8 @@ package za.co.wonderbank.services;
 import org.springframework.stereotype.Service;
 import za.co.wonderbank.models.Customer;
 
+import java.util.List;
+
 @Service
 public interface CustomerService {
 
@@ -15,4 +17,5 @@ public interface CustomerService {
     Customer getBalance(Long accountNumber);
 
 
+    List<Customer> findAllCustomers();
 }

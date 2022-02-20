@@ -28,7 +28,8 @@ public class MyUserDetailsService implements UserDetailsService {
         if (existingUser != null) {
             user = new User(existingUser.getUsername(), existingUser.getPassword(), new ArrayList<>());
             return user;
+        } else {
+            throw new UsernameNotFoundException("Invalid Username or Password");
         }
-        return user;
     }
 }

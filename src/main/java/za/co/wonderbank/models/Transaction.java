@@ -20,6 +20,13 @@ public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Long accountNumber;
+    private String transactionType;
+    private Double amount;
+    private Double balance;
+    private String reference;
+    private LocalDateTime date;
+    private String accountType;
 
     public Transaction() {
     }
@@ -41,12 +48,6 @@ public class Transaction {
         this.date = date;
         this.accountType = accountType;
     }
-    private Long accountNumber;
-    private String transactionType;
-    private Double amount;
-    private Double balance;
-    private String reference;
-    private LocalDateTime date;
-    private String accountType;
+
 
 }
