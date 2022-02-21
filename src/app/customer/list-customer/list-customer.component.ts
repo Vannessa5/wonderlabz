@@ -19,6 +19,18 @@ export class ListCustomerComponent implements OnInit {
     {field: 'phoneNumber', header: 'Phone Number', sortable: false},
   ]
 
+  transactionsCols: any[] = [
+    {field: 'id', header: 'ID', sortable: true},
+    {field: 'accountNumber', header: 'Account Number'},
+    {field: 'accountType', header: 'Account Type'},
+    {field: 'transactionType', header: 'Transaction Type'},
+    {field: 'amount', header: 'Amount', sortable: true},
+    {field: 'balance', header: 'Balance'},
+    {field: 'reference', header: 'Reference'},
+    {field: 'date', header: 'Transaction Date', type: 'date'},
+  ]
+
+
   isLoading = false;
   list: any[] = [];
   total = 0;
@@ -27,6 +39,8 @@ export class ListCustomerComponent implements OnInit {
 
   form: FormGroup = new FormGroup({})
   formIsInvalid = false;
+  showTransactions = false;
+  transactions: any[] = [];
 
   constructor(private customerService: CustomerService, private formBuilder: FormBuilder, private router: Router) {
 
@@ -44,9 +58,14 @@ export class ListCustomerComponent implements OnInit {
 
 
   getCustomers() {
+    this.isLoading = true;
     this.customerService.getAllCustomers().subscribe((response: any[]) => {
       this.list = response;
+      this.isLoading = false;
       console.log('customers', response)
+    }, err => {
+      this.isLoading = false;
+      this.showFailed("Failed Loading Customers")
     })
   }
 
@@ -114,6 +133,23 @@ export class ListCustomerComponent implements OnInit {
       icon: 'error',
       target: 'body',
       confirmButtonText: 'OK',
+    })
+  }
+
+  showTransactionsMo(accountNumber: number) {
+    this.showTransactions = true;
+    this.form.controls['accountNumber'].patchValue(accountNumber);
+    this.getAllTransactions(accountNumber);
+  }
+
+  getAllTransactions(accountNumber: number) {
+    this.isLoading = true;
+    this.customerService.getAllTransactions(accountNumber).subscribe((response: any[]) => {
+      this.transactions = response;
+      this.isLoading = false;
+    }, err => {
+      this.isLoading = false;
+      this.showFailed("Failed to load transactions");
     })
   }
 }

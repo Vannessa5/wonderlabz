@@ -33,5 +33,8 @@ export class CustomerService {
     return this.http.get(`${environment.CUSTOMERS_URL}`)
   }
 
+  getAllTransactions(accountNumber: number): Observable<any> {
+    return this.http.get(`${environment.TRANSACTION_URL}/${accountNumber}`)
 
+  }
 }
